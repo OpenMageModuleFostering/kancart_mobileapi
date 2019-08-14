@@ -32,10 +32,10 @@ class Kancart_MobileApi_Model_Item extends Kancart_MobileApi_Model_Abstract {
         $product = Mage::getModel('catalog/product')
                 ->setStoreId(Mage::app()->getStore()->getId())
                 ->load($item_id);
-        if(!$this->canShowProduct($product)){
-            //
+        if (!$this->canShowProduct($product)) {
+            
         }
-        
+
         if ($product && $product->getId()) {
             $helper = Mage::helper('catalog/image');
             $item['item_id'] = $product->getId();
@@ -136,22 +136,27 @@ class Kancart_MobileApi_Model_Item extends Kancart_MobileApi_Model_Abstract {
         $result->setResult('0x0000', array('item' => $item));
         return $result->returnResult();
     }
-    
+
     private function canShowProduct($product) {
         return $product->isVisibleInCatalog() && $product->isVisibleInSiteVisibility();
     }
 
     public function getItems($apidata) {
-        $fields = $apidata['fields'];
-        $cid = $apidata['cid'];
-        $query = $apidata['query'];
-        $pageNo = isset($apidata['page_no']) ? $apidata['page_no'] : 1;
-        $pageSize = isset($apidata['page_size']) ? $apidata['page_size'] : 20;
-        $orderBy = isset($apidata['order_by']) ? $apidata['order_by'] : 'relevance';
-        $searchResult = $this->items($apidata, $query, $cid, $pageNo, $pageSize, $orderBy);
         $result = Mage::getModel('mobileapi/Result');
-        $result->setResult('0x0000', $searchResult);
-        return $result->returnResult();
+        try {
+            $fields = $apidata['fields'];
+            $cid = $apidata['cid'];
+            $query = $apidata['query'];
+            $pageNo = isset($apidata['page_no']) ? $apidata['page_no'] : 1;
+            $pageSize = isset($apidata['page_size']) ? $apidata['page_size'] : 20;
+            $orderBy = isset($apidata['order_by']) ? $apidata['order_by'] : 'relevance';
+            $searchResult = $this->items($apidata, $query, $cid, $pageNo, $pageSize, $orderBy);
+            $result->setResult('0x0000', $searchResult);
+            return $result->returnResult();
+        } catch (Exception $e) {
+            $result->setResult('0x0013', null, null, $e->getMessage());
+            return $result->returnResult();
+        }
     }
 
     public function items($params, $query=false, $cid=false, $pageNo = 1, $pageSize = 2, $orderBy = 'relevance', $filters = null, $store = null) {
@@ -243,7 +248,7 @@ class Kancart_MobileApi_Model_Item extends Kancart_MobileApi_Model_Abstract {
                 $item['cid'] = $product->getCategoryIds();
                 $item['qty'] = $product->getStockItem()->getQty();
                 $item['allow_add_to_cart'] = 1;
-                if($product->getHasOptions()){
+                if ($product->getHasOptions()) {
                     $item['allow_add_to_cart'] = 0;
                 }
                 $itemData = $product->getData();
@@ -727,19 +732,19 @@ class Kancart_MobileApi_Model_Item extends Kancart_MobileApi_Model_Abstract {
         $price = Mage::app()->getStore()->roundPrice($price);
         return $price;
     }
-    public function getProductMinimalPrice($product){
-        //$productCollection = Mage::getResource
-        $custoemrGroupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
-        $collection = Mage::getResourceModel('catalog/product_collection')
-            ->setStoreId($this->getStoreId())
-            ->addFieldToFilter('entity_id',$product->getEntityId())
-            ->addPriceData($custoemrGroupId,Mage::app()->getWebsite()->getId())
-            ->load();
-        $m = $collection->getFirstItem()->getMinimalPrice();
-        return $collection->getFirstItem()->getMinimalPrice();
-    }
+
+//    public function getProductMinimalPrice($product) {
+//        //$productCollection = Mage::getResource
+//        $custoemrGroupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
+//        $collection = Mage::getResourceModel('catalog/product_collection')
+//                ->setStoreId($this->getStoreId())
+//                ->addFieldToFilter('entity_id', $product->getEntityId())
+//                ->addPriceData($custoemrGroupId, Mage::app()->getWebsite()->getId())
+//                ->load();
+//        return $collection->getFirstItem()->getMinimalPrice();
+//    }
+
     public function collectProductPrices($product) {
-        $this->getProductMinimalPrice($product);
         $DisplayMinimalPrice = true;
         $UseLinkForAsLowAs = false;
         $prices = array();
@@ -788,8 +793,7 @@ class Kancart_MobileApi_Model_Item extends Kancart_MobileApi_Model_Abstract {
     public function getViewPrice($price) {
         return $this->getCoreHelper()->currency($price, false, false);
     }
-    
-    
+
     public function collectBundleProductPrices($product) {
         $DisplayMinimalPrice = true;
         $UseLinkForAsLowAs = false;

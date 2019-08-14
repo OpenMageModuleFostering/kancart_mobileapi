@@ -40,11 +40,6 @@ class Kancart_MobileApi_Model_Checkout extends Kancart_MobileApi_Model_Abstract 
         $session = $this->_getSession();
         $result = Mage::getModel('mobileapi/Result');
 
-//        if (!$session->isLoggedIn()) {
-//            $result->setResult('0x0002');
-//            return $result->returnResult();
-//        }
-
         $customerSession = Mage::getSingleton('customer/session');
         $primaryBillingAddress = $customerSession->getCustomer()->getPrimaryBillingAddress();
 
@@ -88,19 +83,6 @@ class Kancart_MobileApi_Model_Checkout extends Kancart_MobileApi_Model_Abstract 
                 }
                 $exceptions['shipping_address'] = implode('. ', $addressResult['message']);
             }
-//            $address = $this->getCustomer()->getPrimaryBillingAddress();
-//            if (!$address) {
-//                $addressResult = $this->getOnepage()->saveBilling($sadata, $scustomerAddressId);
-//                if (!isset($addressResult['error'])) {
-//                    
-//                } else {
-//                    if (!is_array($addressResult['message'])) {
-//                        $addressResult['message'] = array($addressResult['message']);
-//                    }
-//                    $result->setResult('0x5000', null, null, implode('. ', $addressResult['message']));
-//                    return $result->returnResult();
-//                }
-//            }
         }
         if ((isset($addressData['billing_address_book_id']) && !empty($addressData['billing_address_book_id'])) || (isset($addressData['billing_address']) && !empty($addressData['billing_address']))) {
             if (!empty($addressData['billing_address']))
@@ -132,18 +114,6 @@ class Kancart_MobileApi_Model_Checkout extends Kancart_MobileApi_Model_Abstract 
                 }
                 $exceptions['billing_address'] = implode('. ', $addressResult['message']);
             }
-//            $address = $this->getCustomer()->getPrimaryShippingAddress();
-//            if (!$address) {
-//                if (!isset($addressResult['error'])) {
-//                    
-//                } else {
-//                    if (!is_array($addressResult['message'])) {
-//                        $addressResult['message'] = array($addressResult['message']);
-//                    }
-//                    $result->setResult('0x5000', null, null, implode('. ', $addressResult['message']));
-//                    return $result->returnResult();
-//                }
-//            }
         }
         $result->setResult('0x0000', $this->kancart_shoppingcart_checkout_detail());
         return $result->returnResult();
@@ -152,10 +122,6 @@ class Kancart_MobileApi_Model_Checkout extends Kancart_MobileApi_Model_Abstract 
     public function ShippingMethodsUpdate($shippingMethodData) {
         $session = $this->_getSession();
         $result = Mage::getModel('mobileapi/Result');
-//        if (!$session->isLoggedIn()) {
-//            $result->setResult('0x0002');
-//            return $result->returnResult();
-//        }
         if (!$shippingMethodData) {
             $result->setResult('0x5000', null, null, $this->__('Specified invalid data.'));
             return $result->returnResult();
@@ -218,22 +184,6 @@ class Kancart_MobileApi_Model_Checkout extends Kancart_MobileApi_Model_Abstract 
             $checkoutDetailArr['need_shipping_address'] = false;
         else
             $checkoutDetailArr['need_shipping_address'] = true;
-//        $billing_address = array();
-//        $address = $this->getBillingAddress();
-//        if ($address->getData('country_id')) {
-//            $billing_address = $this->prepareQuoteAddressData($address);
-//        } else {
-//            $address = $this->getCustomer()->getPrimaryBillingAddress();
-//            if ($address) {
-//                $this->getQuote()->setBillingAddress($address);
-//                $billing_address = $this->prepareAddressData($address, null, $address->getId());
-//            }
-//        }
-//        $checkoutDetailArr['billing_address'] = $this->_toAddressData($billing_address);
-//        if (isset($checkoutDetailArr['billing_address']['address_book_id']))
-//            $checkoutDetailArr['need_billing_address'] = false;
-//        else
-//            $checkoutDetailArr['need_billing_address'] = true;
         $checkoutDetailArr['review_orders'] = array($this->getOrderReview());
         $checkoutDetailArr['price_infos'] = $this->getPriceInfos();
 
@@ -589,8 +539,7 @@ class Kancart_MobileApi_Model_Checkout extends Kancart_MobileApi_Model_Abstract 
             $paypalParams = array();
             if ($requestData['payment_method_id'] === 'paypal_standard') {
                 if (!$this->saveOrder()) {
-//                    $result->setResult('0x0002');
-//                    return $result->returnResult();
+                    
                 }
                 $checkOutSession = Mage::getSingleton('checkout/session');
                 $checkOutSession->setPaypalStandardQuoteId($checkOutSession->getQuoteId());
@@ -604,9 +553,6 @@ class Kancart_MobileApi_Model_Checkout extends Kancart_MobileApi_Model_Abstract 
 
                 $paypalRedirectUrl = $standard->getConfig()->getPaypalUrl();
                 $result->setResult('0x0000', array('paypal_redirect_url' => $paypalRedirectUrl, 'paypal_params' => $paypalParams));
-//                $checkOutSession->unsQuoteId();
-//                $checkOutSession->unsRedirectUrl();
-//                $this->clearCart();
                 return $result->returnResult();
             }
         } catch (Mage_Core_Exception $e) {
@@ -641,8 +587,10 @@ class Kancart_MobileApi_Model_Checkout extends Kancart_MobileApi_Model_Abstract 
                 }
             }
             $this->getOnepage()->getQuote()->getPayment()->importData(array('method' => 'paypal_standard'));
-            $this->getOnepage()->saveOrder();
-
+            $newOrderIncrementId = $this->getOnepage()->saveOrder()->getCheckout()->getLastRealOrderId();
+            $newOrder = $this->_initOrder($newOrderIncrementId);
+            $newOrder->addStatusToHistory(false, 'from mobile', false);
+            $newOrder->save();
             $redirectUrl = $this->getOnepage()->getCheckout()->getRedirectUrl();
             $result['success'] = true;
             $result['error'] = false;
@@ -690,6 +638,20 @@ class Kancart_MobileApi_Model_Checkout extends Kancart_MobileApi_Model_Abstract 
         }
         $this->getOnepage()->getQuote()->save();
         return $success;
+    }
+
+    /**
+     * Initialize basic order model
+     *
+     * @param mixed $orderIncrementId
+     * @return Mage_Sales_Model_Order
+     */
+    protected function _initOrder($orderIncrementId) {
+        $order = Mage::getModel('sales/order');
+
+        /* @var $order Mage_Sales_Model_Order */
+        $order->loadByIncrementId($orderIncrementId);
+        return $order;
     }
 
     public function getCustomer() {

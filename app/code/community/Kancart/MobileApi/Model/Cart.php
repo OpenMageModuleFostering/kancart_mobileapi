@@ -151,7 +151,7 @@ class Kancart_MobileApi_Model_Cart extends Kancart_MobileApi_Model_Abstract {
                     //*                     if (isset($_formatedOptionValue['full_view'])) {
                 }
                 $optionsArr = substr($optionsArr, 0, strlen($optionsArr) - 1);
-                $cartItemArr['skus'] = $optionsArr;
+                $cartItemArr['display_skus'] = $optionsArr;
             }
             if ($messages = $renderer->getMessages()) {
                 $itemMessagesArr = array();

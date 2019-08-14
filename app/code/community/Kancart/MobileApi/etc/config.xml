@@ -33,9 +33,7 @@
             <Kancart_group>
                 <Kancart_appkey>KC_APP_KEY</Kancart_appkey>
                 <Kancart_appsecrect>KC_APP_SECRECT</Kancart_appsecrect>
-                <Kancart_PaymentEnv>1</Kancart_PaymentEnv>
             </Kancart_group>
         </Kancart>
     </default>
 </config>
-

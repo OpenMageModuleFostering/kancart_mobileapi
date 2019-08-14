@@ -87,37 +87,6 @@ class Kancart_MobileApi_Model_PayPalEC extends Kancart_MobileApi_Model_Abstract 
             $result->setResult('0x9000', null, null, $e->getMessage());
             return $result->returnResult();
         }
-        /* if (!$session->isLoggedIn()) {
-          $result->setResult('0x0000', array('token' => '', 'need_login' => true));
-          } else {
-          try {
-          $this->getQuote()->reserveOrderId()->save();
-          $this->getApi();
-          $this->_api->setAmount($this->getQuote()->getBaseGrandTotal())
-          ->setCurrencyCode($this->getQuote()->getBaseCurrencyCode())
-          ->setInvNum($this->getQuote()->getReservedOrderId())
-          ->setReturnUrl(urldecode($requestData['return_url']))
-          ->setCancelUrl(urldecode($requestData['cancel_url']))
-          ->setSolutionType($this->_config->solutionType)
-          ->setPaymentAction($this->_config->paymentAction)
-          ;
-          $paypalCart = Mage::getModel('paypal/cart', array($this->getQuote()));
-          $this->_api->setPaypalCart($paypalCart)
-          ->setIsLineItemsEnabled($this->_config->lineItemsEnabled)
-          ;
-          $this->_api->callSetExpressCheckout();
-          $token = $this->_api->getToken();
-          $_SESSION['kancart_paypal_token'] = $token;
-          $result->setResult('0x0000', array('token' => $token));
-          } catch (Mage_Core_Exception $e) {
-          $result->setResult('0x9000', null, null, $e->getMessage());
-          return $result->returnResult();
-          } catch (Exception $e) {
-          $result->setResult('0x9000', null, null, $e->getMessage());
-          return $result->returnResult();
-          }
-          }
-          return $result->returnResult(); */
     }
 
     private function getPaypalSession() {
@@ -213,6 +182,8 @@ class Kancart_MobileApi_Model_PayPalEC extends Kancart_MobileApi_Model_Abstract 
             $this->getOnepage()->saveOrder();
             $this->getOnepage()->getQuote()->save();
             $order = $this->_initOrder($this->getOnepage()->getLastOrderID());
+            $order->addStatusToHistory(false, 'from mobile', false);
+            $order->save();
             $this->getOnepage()->getCheckout()->clear();
             $result->setResult('0x0000', array('transaction_id' => $order->getPayment()->getLastTransId(),
                 'payment_total' => $order->getPayment()->getAmountAuthorized(),
