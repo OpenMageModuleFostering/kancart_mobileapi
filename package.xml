@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package>
+    <name>KANCART_MobileAPI</name>
+    <version>1.2.4</version>
+    <stability>stable</stability>
+    <license>OSL v3.0</license>
+    <channel>community</channel>
+    <extends/>
+    <summary>Kancart Mobile API Service</summary>
+    <description>Kancart.com provides a fast on boarding iOS, Android native app and mobile web site solution.&#xD;
+This is the Magento server side extension to provide API service for all Kancart mobile clients.</description>
+    <notes>v1.2.4 stable release&#xD;
+&#xD;
+Fixed all orders are displayed in one page.&#xD;
+Add support multi languages.&#xD;
+Add support currencies switch.&#xD;
+</notes>
+    <authors><author><name>Kancart.com</name><user>Kancarter</user><email>yazhou.li@honestwalker.com</email></author></authors>
+    <date>2012-08-10</date>
+    <time>05:42:04</time>
+    <contents><target name="magecommunity"><dir name="Kancart"><dir name="MobileApi"><dir name="Controller"><file name="Action.php" hash="8780e46f9cc324f77587051b1a7620cf"/></dir><dir name="Helper"><file name="CryptoUtil.php" hash="477c014269a9bbb3831c61497c709a68"/><file name="DES.php" hash="72fc6edb153835d5c0f56284685d5099"/><file name="Data.php" hash="1de7646684794176f7e09c8ea5e5452c"/><file name="Rijndael.php" hash="11bd7f4d19b5f648e2ef3ec6ca059369"/></dir><dir name="Model"><file name="Abstract.php" hash="21058a2c9f52b465762748050acb8477"/><file name="Cart.php" hash="61d6028ec54c33cb9637e79c4da4cdca"/><file name="Category.php" hash="287aec3d7422d79dc6349e2462fc1c25"/><file name="Checkout.php" hash="35d8bb4a8470e92afb6f4cb9b5caf953"/><file name="Country.php" hash="d5f36a31a22df848c73535bf552e4b43"/><file name="Currency.php" hash="7eddaed45bcdb5ea8b0dec8bfc52c090"/><file name="Item.php" hash="acfbe4c7f5c1d1f7f73671ce0b210fad"/><file name="Language.php" hash="d06c8d269c4045eb4a12b6f6c3881bc8"/><file name="Order.php" hash="9bdd0aca4b0ac08c491d4252d99dc2ba"/><file name="OrderStatus.php" hash="2f1be63f93f113af61c79b7f91b238cb"/><file name="PayPalEC.php" hash="fd2589f70ca6a71b6bc69270a6ef4944"/><file name="PayPalWPS.php" hash="0fda900dbb748d52ec8e995ebeacd9db"/><file name="Result.php" hash="37122fbfc2853db5a9ea8b37b4be09ad"/><file name="TradeRate.php" hash="df5723d1394e72173d5adcbecbb10dbd"/><file name="User.php" hash="70732700c8aab3648f22c1eb9a110981"/><file name="Zone.php" hash="c1ec9112036dab0fd52b99aba9b6307d"/></dir><dir name="controllers"><file name="IndexController.php" hash="78d1e1fe73822ea8d18eb16a10553339"/></dir><dir name="etc"><file name="adminhtml.xml" hash="3364317d05e33ac33f067aed7a9f6a58"/><file name="config.xml" hash="99d8744866313e75060581172040cc41"/><file name="system.xml" hash="3773fb59714be08032ce03889acc4136"/></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Kancart_MobileApi.xml" hash="20e43bc5014aab803d317345552f06dc"/></dir></target></contents>
+    <compatible/>
+    <dependencies><required><php><min>5.1.0</min><max>6.0.0</max></php></required></dependencies>
+</package>

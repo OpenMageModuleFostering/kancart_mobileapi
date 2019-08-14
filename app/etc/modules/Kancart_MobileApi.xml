@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- Kancart_Directory.xml --> 
+<config>  
+	<modules>  
+         <Kancart_MobileApi>  
+             <active>true</active>  
+             <codePool>community</codePool><!-- this could be also 'local' --> 
+             <depends>  
+                 <Mage_Api/>  
+             </depends>
+         </Kancart_MobileApi>  
+     </modules>  
+ </config> 
+

@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/KANCART_MobileAPI",
+    "type": "magento-module",
+    "license": "OSL-v3.0",
+    "homepage": "",
+    "description": "Kancart Mobile API Service",
+    "authors": [
+    {
+        "name": "Kancart.com",
+        "email": "yazhou.li@honestwalker.com"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}
