@@ -151,7 +151,7 @@ class Kancart_MobileApi_Model_Checkout extends Kancart_MobileApi_Model_Abstract 
     }
 
     public function kancart_shoppingcart_checkout_detail() {
-
+        $this->getQuote()->setTotalsCollectedFlag(false)->collectTotals()->save();
         $checkoutDetailArr = array();
         $billing_address = array();
         $baddress = $this->getBillingAddress();
@@ -547,10 +547,12 @@ class Kancart_MobileApi_Model_Checkout extends Kancart_MobileApi_Model_Abstract 
                 foreach ($standard->getStandardCheckoutFormFields() as $field => $value) {
                     $paypalParams[$field] = $value;
                 }
+                $paypalParams['cmd'] = '_xclick';
+                $paypalParams['bn'] = 'PP-BuyNowBF:btn_buynowCC_LG.gif:NonHosted';
                 $paypalParams['shopping_url'] = $requestData['shoppingcart_url'];
                 $paypalParams['return'] = $requestData['return_url'];
                 $paypalParams['cancel_return'] = $requestData['cancel_url'];
-
+                unset($paypalParams['discount_amount']);
                 $paypalRedirectUrl = $standard->getConfig()->getPaypalUrl();
                 $result->setResult('0x0000', array('paypal_redirect_url' => $paypalRedirectUrl, 'paypal_params' => $paypalParams));
                 return $result->returnResult();

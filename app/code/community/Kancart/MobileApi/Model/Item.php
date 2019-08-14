@@ -159,7 +159,7 @@ class Kancart_MobileApi_Model_Item extends Kancart_MobileApi_Model_Abstract {
         }
     }
 
-    public function items($params, $query=false, $cid=false, $pageNo = 1, $pageSize = 2, $orderBy = 'relevance', $filters = null, $store = null) {
+    public function items($params, $query = false, $cid = false, $pageNo = 1, $pageSize = 2, $orderBy = 'relevance', $filters = null, $store = null) {
         $helper = Mage::helper('catalogsearch');
         $query = $helper->getQuery();
         $query->setStoreId(Mage::app()->getStore()->getId());
@@ -225,6 +225,11 @@ class Kancart_MobileApi_Model_Item extends Kancart_MobileApi_Model_Abstract {
                     $orderKey = 'price';
                     $orderValue = 'desc';
                 }break;
+            case 'newarrival': {
+                    $orderKey = 'entity_id';
+                    $orderValue = 'desc';
+                }
+                break;
             default: {
                     $orderKey = 'relevance';
                     $orderValue = 'asc';

@@ -148,9 +148,7 @@ class Kancart_MobileApi_Model_Cart extends Kancart_MobileApi_Model_Abstract {
                 foreach ($_options as $_option) {
                     $_formatedOptionValue = $renderer->getFormatedOptionValue($_option);
                     $optionsArr = $optionsArr . strip_tags($_option['label']) . ':' . strip_tags($_formatedOptionValue['value']) . '<br/>';
-                    //*                     if (isset($_formatedOptionValue['full_view'])) {
                 }
-                $optionsArr = substr($optionsArr, 0, strlen($optionsArr) - 1);
                 $cartItemArr['display_skus'] = $optionsArr;
             }
             if ($messages = $renderer->getMessages()) {
@@ -416,23 +414,6 @@ class Kancart_MobileApi_Model_Cart extends Kancart_MobileApi_Model_Abstract {
             if (!$product) {
                 $cartMessages['result'] = Kancart_MobileApi_Model_Result::ERROR_0x5002;
                 return $this->ShoppingCartGet($cartMessages);
-            }
-            if ($product->isConfigurable()) {
-                $qty = isset($productData['qty']) ? $productData['qty'] : 0;
-                $requestedQty = ($qty > 1) ? $qty : 1;
-                $at = array();
-                $skus = array();
-                if (isset($productData['skus'])) {
-                    $skus = json_decode($productData['skus'], true);
-                }
-                foreach ($skus as $sku) {
-                    $at[$sku['sku_id']] = $sku['value'];
-                }
-                $subProduct = $product->getTypeInstance(true)->getProductByAttributes($at, $product);
-                if ($requestedQty < ($requiredQty = $subProduct->getStockItem()->getMinSaleQty())) {
-                    $requestedQty = $requiredQty;
-                }
-                $productData['qty'] = $requestedQty;
             }
             $params = array();
             $params['qty'] = $productData['qty'];
